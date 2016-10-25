@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LoadingCustomView04">
+        <attr name="progressBankgroundColor" format="color"/>
+        <attr name="progressColor" format="color"/>
+        <attr name="progress" format="integer"/>
+        <attr name="progressBarFrameHeight" format="dimension"/>
+        <attr name="progressBarBankgroundStyle" format="enum">
+            <enum name="solid" value="1"/>
+            <enum name="solid_and_frame" value="2"/>
+            <enum name="hollow" value="3"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="LoadingCustomView05">
+        <attr name="progressBankgroundColor2" format="color"/>
+        <attr name="progressColor2" format="color"/>
+        <attr name="progress2" format="integer"/>
+        <attr name="progressBarFrameHeight2" format="dimension"/>
+        <attr name="progressBarBankgroundStyle2" format="enum">
+            <enum name="solid" value="1"/>
+            <enum name="solid_and_frame" value="2"/>
+            <enum name="hollow" value="3"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CustomSearchView07">
+        <attr name="outSideCircleColor" format="color"/>
+        <attr name="insideSearchColor" format="color"/>
+        <attr name="outSideCircleFrameHeight" format="dimension"/>
+        <attr name="insideSearchCircleFrameHeight" format="dimension"/>
+        <attr name="outSideCircleRadius" format="dimension"/>
+        <attr name="insideSearchCircleRadius" format="dimension"/>
+    </declare-styleable>
+</resources>
