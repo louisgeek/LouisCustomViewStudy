@@ -3,7 +3,7 @@
 
 ![image](https://raw.githubusercontent.com/louisgeek/LouisCustomViewStudy/master/screenshots/pic1.gif)
 
-![image](https://raw.githubusercontent.com/louisgeek/LouisCustomViewStudy/master/screenshots/pic2.gif)
+![image](https://raw.githubusercontent.com/louisgeek/LouisCustomViewStudy/master/screenshots/pic2.png)
 
 ![image](https://raw.githubusercontent.com/louisgeek/LouisCustomViewStudy/master/screenshots/pic3.gif)
 
