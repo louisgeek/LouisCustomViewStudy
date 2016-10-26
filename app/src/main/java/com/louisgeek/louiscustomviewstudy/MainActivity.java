@@ -17,8 +17,8 @@ public class MainActivity extends AppCompatActivity {
         // setContentView(new BitmapCustomView03(this));
         // setContentView(new LoadingCustomView04(this));
         //  setContentView(new LoadingCustomView05(this));
-         //setContentView(new CustomView06(this));
-       //  setContentView(new CustomSearchView07(this));
+        // setContentView(new CustomView06(this));
+        //   setContentView(new CustomSearchView07(this));
       // setContentView(new LikeDouBan_AlipaySmileLoadingView(this));
 
        final LikeDouBan_AlipaySmileLoadingView id_smile_loading = (LikeDouBan_AlipaySmileLoadingView) findViewById(R.id.id_smile_loading);
