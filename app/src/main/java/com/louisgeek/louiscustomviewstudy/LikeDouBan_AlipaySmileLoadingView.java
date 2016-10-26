@@ -3,6 +3,7 @@ package com.louisgeek.louiscustomviewstudy;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -46,13 +47,15 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
 
     private float mHoldSimleProgress;
     private float mRaidus = this.dp2px(30);
-    private int mCircleFrameHeight = this.dp2px(10);
+    private  int mSmileCircleFrameHeight= this.dp2px(10);
     private int flagLoadingCount;
     private int flagHoldSmileCount;
     private boolean mStopLoading=true;
 
     private int START_END_DURATION=800;
     private ValueAnimator.AnimatorListener mAnimatorListener;
+    private  int mSmileColor= Color.parseColor("#2d832e");
+
 
     public LikeDouBan_AlipaySmileLoadingView(Context context) {
         this(context, null);
@@ -64,15 +67,24 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
 
     public LikeDouBan_AlipaySmileLoadingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.LikeDouBan_AlipaySmileLoadingView);
+        mRaidus = ta.getDimension(R.styleable.LikeDouBan_AlipaySmileLoadingView_smileCircleRadius, mRaidus);
+        mSmileCircleFrameHeight = ta.getDimensionPixelOffset(R.styleable.LikeDouBan_AlipaySmileLoadingView_smileCircleFrameHeight, mSmileCircleFrameHeight);
+        mSmileColor = ta.getColor(R.styleable.LikeDouBan_AlipaySmileLoadingView_smileColor, mSmileColor);
+
+        //
+        ta.recycle();
+
+
         init();
     }
 
     private void init() {
         mPaint = new Paint();
-        mPaint.setStrokeWidth(mCircleFrameHeight);
+        mPaint.setStrokeWidth(mSmileCircleFrameHeight);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.parseColor("#2d832e"));
+        mPaint.setColor(mSmileColor);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
 
 
@@ -236,8 +248,8 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         /**
          * 实际的内容宽和高
          */
-        int contentWidthSize = (int) (mRaidus*2+mCircleFrameHeight/2+this.getPaddingLeft()+this.getPaddingRight());
-        int contentHeightSize = (int) (mRaidus*2+mCircleFrameHeight/2+this.getPaddingTop()+this.getPaddingBottom());
+        int contentWidthSize = (int) (mRaidus*2+mSmileCircleFrameHeight/2+this.getPaddingLeft()+this.getPaddingRight());
+        int contentHeightSize = (int) (mRaidus*2+mSmileCircleFrameHeight/2+this.getPaddingTop()+this.getPaddingBottom());
         //getDefaultSize()
         int width = resolveSize(contentWidthSize, widthMeasureSpec);
         int height = resolveSize(contentHeightSize, heightMeasureSpec);

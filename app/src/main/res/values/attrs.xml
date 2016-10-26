@@ -31,4 +31,10 @@
         <attr name="outSideCircleRadius" format="dimension"/>
         <attr name="insideSearchCircleRadius" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="LikeDouBan_AlipaySmileLoadingView">
+        <attr name="smileCircleRadius" format="dimension"/>
+        <attr name="smileCircleFrameHeight" format="dimension"/>
+        <attr name="smileColor" format="color"/>
+    </declare-styleable>
 </resources>
