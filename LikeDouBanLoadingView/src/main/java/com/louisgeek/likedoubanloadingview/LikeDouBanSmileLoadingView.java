@@ -13,11 +13,8 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * 支付宝的稍微和豆瓣有点区别，下面是仿豆瓣App加载中loading，支付宝自行调整下即可。
@@ -80,6 +77,8 @@ public class LikeDouBanSmileLoadingView extends View {
         //
         ta.recycle();
 
+        //关闭硬件加速
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         init();
     }
@@ -181,20 +180,20 @@ public class LikeDouBanSmileLoadingView extends View {
             //
             switch (mCurrenState) {
                 case STATE_STOP:
-                    Log.d(TAG, "handleMessage: STATE_STOP");
+                    //Log.d(TAG, "handleMessage: STATE_STOP");
                     if (!mStopLoading){
                     mCurrenState = STATE_START_LOAD;
                     mValueAnimatorStartLoad.start();
                     }
                     break;
                 case STATE_START_LOAD:
-                    Log.d(TAG, "handleMessage: STATE_START_LOAD");
+                    //Log.d(TAG, "handleMessage: STATE_START_LOAD");
                    // mStopLoading = false;
                     mCurrenState = STATE_LOADING;
                     mValueAnimatorLoading.start();
                     break;
                 case STATE_LOADING:
-                    Log.d(TAG, "handleMessage: STATE_LOADING");
+                    //Log.d(TAG, "handleMessage: STATE_LOADING");
                     if (!mStopLoading) {
                        //## if (flagLoadingCount <0) {
                         if (flagLoadingCount <mSmileHoldRotateCount-1) {
@@ -213,7 +212,7 @@ public class LikeDouBanSmileLoadingView extends View {
                     }
                     break;
                 case STATE_END_LOADING:
-                    Log.d(TAG, "handleMessage: STATE_END_LOADING");
+                   // Log.d(TAG, "handleMessage: STATE_END_LOADING");
                     /**
                      * 结束加载 到 翻转微笑....
                      */
@@ -221,7 +220,7 @@ public class LikeDouBanSmileLoadingView extends View {
                     mValueAnimatorTurnSmile.start();
                     break;
                 case STATE_TURN_SMILE:
-                    Log.d(TAG, "handleMessage: STATE_TURN_SMILE");
+                   // Log.d(TAG, "handleMessage: STATE_TURN_SMILE");
                    if (!mStopLoading) {
                         if (flagHoldSmileCount < 1) {
                             flagHoldSmileCount++;
@@ -305,7 +304,7 @@ public class LikeDouBanSmileLoadingView extends View {
                 /**
                  *画停止的笑脸
                  */
-                Log.d(TAG, "onDraw: STATE_STOP");
+                //Log.d(TAG, "onDraw: STATE_STOP");
                 //下巴
                 path.addArc(rectf_circle, 0f, 179.99f);
                 canvas.drawPath(path, mPaint);
@@ -317,7 +316,7 @@ public class LikeDouBanSmileLoadingView extends View {
                 /**
                  *画左脸颊吸收眼睛到右脸颊
                  */
-                Log.d(TAG, "onDraw: STATE_START_LOAD");
+                //Log.d(TAG, "onDraw: STATE_START_LOAD");
                 path.addArc(rectf_circle, 0f, 359.99f);
                 PathMeasure pathMeasure = new PathMeasure();
                 pathMeasure.setPath(path, false);
@@ -343,7 +342,7 @@ public class LikeDouBanSmileLoadingView extends View {
                 /**
                  *右边点转圈  回到右边点   用于重复动作
                  */
-                Log.d(TAG, "onDraw: STATE_LOADING");
+               // Log.d(TAG, "onDraw: STATE_LOADING");
                 float startAngle = 90f + mLoadingProgress * 360;
                 path.addArc(rectf_circle, startAngle, 359.99f * 3 / 4);
                 canvas.drawPath(path, mPaint);
@@ -352,7 +351,7 @@ public class LikeDouBanSmileLoadingView extends View {
                 /**
                  *释放眼睛  到笑脸横向
                  */
-                Log.d(TAG, "onDraw: STATE_END_LOADING");
+               // Log.d(TAG, "onDraw: STATE_END_LOADING");
                 path.addArc(rectf_circle, 90f, 359.99f);
                 PathMeasure pathMeasureEndLoading = new PathMeasure();
                 pathMeasureEndLoading.setPath(path, false);
@@ -384,7 +383,7 @@ public class LikeDouBanSmileLoadingView extends View {
                 /**
                  *笑脸翻转
                  */
-                Log.d(TAG, "onDraw: STATE_SMILE");
+                //Log.d(TAG, "onDraw: STATE_SMILE");
                 //下巴
                 float startAngleSmile = -90f + mTurnSmileProgress * 90;
                 path.addArc(rectf_circle, startAngleSmile, 179.99f);
