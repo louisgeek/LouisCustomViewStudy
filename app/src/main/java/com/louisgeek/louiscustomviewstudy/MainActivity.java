@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.louisgeek.likedoubanloadingview.LikeDouBanSmileLoadingView;
+
 public class MainActivity extends AppCompatActivity {
 
     float progress = 0;
@@ -19,9 +21,14 @@ public class MainActivity extends AppCompatActivity {
         //  setContentView(new LoadingCustomView05(this));
         // setContentView(new CustomView06(this));
         //   setContentView(new CustomSearchView07(this));
-      // setContentView(new LikeDouBan_AlipaySmileLoadingView(this));
-
-       final LikeDouBan_AlipaySmileLoadingView id_smile_loading = (LikeDouBan_AlipaySmileLoadingView) findViewById(R.id.id_smile_loading);
+      // setContentView(new LikeDouBanSmileLoadingView(this));
+        //setContentView(new RadarVIew08(this));
+        // setContentView(new BezierCurveView(this));
+        //setContentView(new BezierCurveViewThird(this));
+        // setContentView(new BezierCurveViewDrawCircle(this));
+         /*setContentView(new Path_EVEN_ODD_WINDING_View(this));*/
+        //setContentView(new BezierCurveViewCircle2Heart(this));
+      final LikeDouBanSmileLoadingView id_smile_loading = (LikeDouBanSmileLoadingView) findViewById(R.id.id_smile_loading);
         Button id_start = (Button) findViewById(R.id.id_start);
         Button id_stop = (Button) findViewById(R.id.id_stop);
 

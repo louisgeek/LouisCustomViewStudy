@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LikeDouBanSmileLoadingView">
+        <attr name="smileCircleRadius" format="dimension"/>
+        <attr name="smileCircleFrameHeight" format="dimension"/>
+        <attr name="smileColor" format="color"/>
+        <attr name="smileAutomatic" format="boolean"/>
+        <attr name="smileHoldRotateCount" format="integer"/>
+    </declare-styleable>
+</resources>

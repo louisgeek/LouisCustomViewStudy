@@ -1,4 +1,4 @@
-package com.louisgeek.louiscustomviewstudy;
+package com.louisgeek.likedoubanloadingview;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -24,7 +24,7 @@ import static android.content.ContentValues.TAG;
  * Created by louisgeek on 2016/10/24.
  */
 
-public class LikeDouBan_AlipaySmileLoadingView extends View {
+public class LikeDouBanSmileLoadingView extends View {
     private final int STATE_STOP = 0;
     private final int STATE_START_LOAD = 1;
     private final int STATE_LOADING = 2;
@@ -46,32 +46,37 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
     private float mEndLoadingProgress;
 
     private float mHoldSimleProgress;
-    private float mRaidus = this.dp2px(30);
-    private  int mSmileCircleFrameHeight= this.dp2px(10);
+    private float mRaidus = this.dp2px(23);
+    private int mSmileCircleFrameHeight = this.dp2px(7);
     private int flagLoadingCount;
     private int flagHoldSmileCount;
-    private boolean mStopLoading=true;
+    private boolean mStopLoading = true;
 
-    private int START_END_DURATION=800;
+    private int START_END_DURATION = 800;
     private ValueAnimator.AnimatorListener mAnimatorListener;
-    private  int mSmileColor= Color.parseColor("#2d832e");
+    private int mSmileColor = Color.parseColor("#2d832e");
+    private boolean mSmileAutomatic;
+    private int mSmileHoldRotateCount;
 
 
-    public LikeDouBan_AlipaySmileLoadingView(Context context) {
+    public LikeDouBanSmileLoadingView(Context context) {
         this(context, null);
     }
 
-    public LikeDouBan_AlipaySmileLoadingView(Context context, AttributeSet attrs) {
+    public LikeDouBanSmileLoadingView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LikeDouBan_AlipaySmileLoadingView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LikeDouBanSmileLoadingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.LikeDouBan_AlipaySmileLoadingView);
-        mRaidus = ta.getDimension(R.styleable.LikeDouBan_AlipaySmileLoadingView_smileCircleRadius, mRaidus);
-        mSmileCircleFrameHeight = ta.getDimensionPixelOffset(R.styleable.LikeDouBan_AlipaySmileLoadingView_smileCircleFrameHeight, mSmileCircleFrameHeight);
-        mSmileColor = ta.getColor(R.styleable.LikeDouBan_AlipaySmileLoadingView_smileColor, mSmileColor);
-
+        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.LikeDouBanSmileLoadingView);
+        mRaidus = ta.getDimension(R.styleable.LikeDouBanSmileLoadingView_smileCircleRadius, mRaidus);
+        mSmileCircleFrameHeight = ta.getDimensionPixelOffset(R.styleable.LikeDouBanSmileLoadingView_smileCircleFrameHeight, mSmileCircleFrameHeight);
+        mSmileColor = ta.getColor(R.styleable.LikeDouBanSmileLoadingView_smileColor, mSmileColor);
+        mSmileAutomatic = ta.getBoolean(R.styleable.LikeDouBanSmileLoadingView_smileAutomatic, mSmileAutomatic);
+        mSmileHoldRotateCount = ta.getInteger(R.styleable.LikeDouBanSmileLoadingView_smileHoldRotateCount, mSmileHoldRotateCount);
+        //fix
+        mSmileHoldRotateCount=mSmileHoldRotateCount>0?mSmileHoldRotateCount:1;
         //
         ta.recycle();
 
@@ -84,6 +89,7 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         mPaint.setStrokeWidth(mSmileCircleFrameHeight);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
         mPaint.setColor(mSmileColor);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
 
@@ -130,7 +136,7 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         });
         mValueAnimatorLoading.addListener(mAnimatorListener);
 
-        mValueAnimatorTurnSmile= ValueAnimator.ofFloat(0f, 1f).setDuration(500);
+        mValueAnimatorTurnSmile = ValueAnimator.ofFloat(0f, 1f).setDuration(500);
         mValueAnimatorTurnSmile.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -141,7 +147,7 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         mValueAnimatorTurnSmile.addListener(mAnimatorListener);
 
 
-        mValueAnimatorEndLoading= ValueAnimator.ofFloat(0f, 1f).setDuration(START_END_DURATION);
+        mValueAnimatorEndLoading = ValueAnimator.ofFloat(0f, 1f).setDuration(START_END_DURATION);
         mValueAnimatorEndLoading.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -151,7 +157,7 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         });
         mValueAnimatorEndLoading.addListener(mAnimatorListener);
 
-        mValueAnimatorHoldSimle= ValueAnimator.ofFloat(0f, 1f).setDuration(500);
+        mValueAnimatorHoldSimle = ValueAnimator.ofFloat(0f, 1f).setDuration(500);
         mValueAnimatorHoldSimle.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -162,8 +168,10 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         mValueAnimatorHoldSimle.addListener(mAnimatorListener);
 
 
+        if (mSmileAutomatic) {
+            startLoad();//start
+        }
 
-        /*mHandler.sendEmptyMessage(0);//start*/
     }
 
     private Handler mHandler = new Handler() {
@@ -171,31 +179,34 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             //
-        switch (mCurrenState) {
-             case STATE_STOP:
-                 Log.d(TAG, "handleMessage: STATE_STOP");
-                 mCurrenState = STATE_START_LOAD;
-                 mValueAnimatorStartLoad.start();
-                 break;
+            switch (mCurrenState) {
+                case STATE_STOP:
+                    Log.d(TAG, "handleMessage: STATE_STOP");
+                    if (!mStopLoading){
+                    mCurrenState = STATE_START_LOAD;
+                    mValueAnimatorStartLoad.start();
+                    }
+                    break;
                 case STATE_START_LOAD:
                     Log.d(TAG, "handleMessage: STATE_START_LOAD");
-                    mValueAnimatorLoading.start();
-                    mStopLoading=false;
+                   // mStopLoading = false;
                     mCurrenState = STATE_LOADING;
+                    mValueAnimatorLoading.start();
                     break;
                 case STATE_LOADING:
                     Log.d(TAG, "handleMessage: STATE_LOADING");
-                    if (!mStopLoading){
-                        if (flagLoadingCount<0) {
+                    if (!mStopLoading) {
+                       //## if (flagLoadingCount <0) {
+                        if (flagLoadingCount <mSmileHoldRotateCount-1) {
                             flagLoadingCount++;
                             mValueAnimatorLoading.start();
-                        }else {
-                            flagLoadingCount=0;
+                        } else {
+                            flagLoadingCount = 0;
                             //
                             mCurrenState = STATE_END_LOADING;
                             mValueAnimatorEndLoading.start();
                         }
-                    }else{
+                    } else {
                         //结束
                         mCurrenState = STATE_END_LOADING;
                         mValueAnimatorEndLoading.start();
@@ -206,32 +217,33 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
                     /**
                      * 结束加载 到 翻转微笑....
                      */
-                    mValueAnimatorTurnSmile.start();
                     mCurrenState = STATE_TURN_SMILE;
-                 break;
-             case STATE_TURN_SMILE:
-                 Log.d(TAG, "handleMessage: STATE_SMILE");
-                 if (!mStopLoading){
-                     if (flagHoldSmileCount<1){
-                         flagHoldSmileCount++;
-                         /**
-                          * 保持微笑 。。。。
-                          */
-                         mValueAnimatorHoldSimle.start();
-                     }else{
-                         flagHoldSmileCount=0;
+                    mValueAnimatorTurnSmile.start();
+                    break;
+                case STATE_TURN_SMILE:
+                    Log.d(TAG, "handleMessage: STATE_TURN_SMILE");
+                   if (!mStopLoading) {
+                        if (flagHoldSmileCount < 1) {
+                            flagHoldSmileCount++;
+                            /**
+                             * 保持微笑 。。。。
+                             */
+                            mValueAnimatorHoldSimle.start();
+                        } else {
+                            flagHoldSmileCount = 0;
 
-                         //继续。。。。。
-                         mCurrenState = STATE_START_LOAD;
-                         mValueAnimatorStartLoad.start();
-                     }
+                            //继续。。。。。
+                            mCurrenState = STATE_START_LOAD;
+                            mValueAnimatorStartLoad.start();
+                        }
 
-                 }else {
-                     //结束
-                     mCurrenState = STATE_STOP;
-
-                 }
-                 break;
+                  } else {
+                     //   Log.d(TAG, "handleMessage: xxxx");
+                      //结束!!!
+                        mCurrenState = STATE_STOP;
+                        mHandler.sendEmptyMessage(0);
+                   }
+                    break;
             }
         }
     };
@@ -248,8 +260,8 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         /**
          * 实际的内容宽和高
          */
-        int contentWidthSize = (int) (mRaidus*2+mSmileCircleFrameHeight/2+this.getPaddingLeft()+this.getPaddingRight());
-        int contentHeightSize = (int) (mRaidus*2+mSmileCircleFrameHeight/2+this.getPaddingTop()+this.getPaddingBottom());
+        int contentWidthSize = (int) (mRaidus * 2 + mSmileCircleFrameHeight / 2 + this.getPaddingLeft() + this.getPaddingRight());
+        int contentHeightSize = (int) (mRaidus * 2 + mSmileCircleFrameHeight / 2 + this.getPaddingTop() + this.getPaddingBottom());
         //getDefaultSize()
         int width = resolveSize(contentWidthSize, widthMeasureSpec);
         int height = resolveSize(contentHeightSize, heightMeasureSpec);
@@ -257,8 +269,8 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         /**
          * 修正xml设置太小的情况
          */
-        width=width<contentWidthSize?contentWidthSize:width;
-        height=height<contentHeightSize?contentHeightSize:height;
+        width = width < contentWidthSize ? contentWidthSize : width;
+        height = height < contentHeightSize ? contentHeightSize : height;
 
         setMeasuredDimension(width, height);
 
@@ -282,7 +294,7 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
         /**
          * 眼睛初始
          */
-        float eyeXDisance = mRaidus *2/3;
+        float eyeXDisance = mRaidus * 2 / 3;
         float eyeYDisance = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance * eyeXDisance);
         /*###  canvas.drawPoint(-eyeXDisance,-eyeYDisance,mPaint);
         canvas.drawPoint(eyeXDisance,-eyeYDisance,mPaint);*/
@@ -320,9 +332,9 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
                 pathMeasure.getSegment(startD, startD + loadingDisance, dst, true);
                 canvas.drawPath(dst, mPaint);
                 //眼睛应该同时顺时针旋转一部分
-                float eyeXDisance_left =eyeXDisance-mStartLoadProgress*mRaidus/3;
+                float eyeXDisance_left = eyeXDisance - mStartLoadProgress * mRaidus / 3;
                 float eyeYDisance_left = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance_left * eyeXDisance_left);
-                float eyeXDisance_right =eyeXDisance+mStartLoadProgress*mRaidus/3;
+                float eyeXDisance_right = eyeXDisance + mStartLoadProgress * mRaidus / 3;
                 float eyeYDisance_right = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance_right * eyeXDisance_right);
                 canvas.drawPoint(-eyeXDisance_left, -eyeYDisance_left, mPaint);//左边
                 canvas.drawPoint(eyeXDisance_right, -eyeYDisance_right, mPaint);//右边
@@ -347,24 +359,24 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
 
                 Path dstEndLoading = new Path();
                 //假设 整个进度 起点转过了180度，就是长度1/2
-                float startDEndLoading = pathMeasureEndLoading.getLength()/2*mEndLoadingProgress;
+                float startDEndLoading = pathMeasureEndLoading.getLength() / 2 * mEndLoadingProgress;
                 //假设 整个进度  终点转过了180度 再加上长度的1/4
-                float endLoadingDisance = pathMeasureEndLoading.getLength()/2+pathMeasureEndLoading.getLength() / 4 * (1-mEndLoadingProgress);
+                float endLoadingDisance = pathMeasureEndLoading.getLength() / 2 + pathMeasureEndLoading.getLength() / 4 * (1 - mEndLoadingProgress);
 
                 pathMeasureEndLoading.getSegment(startDEndLoading, startDEndLoading + endLoadingDisance, dstEndLoading, true);
                 canvas.drawPath(dstEndLoading, mPaint);
 
                 //眼睛应该同时顺时针旋转一部分
-                float eyeXDisance_end_left_default= mRaidus;
+                float eyeXDisance_end_left_default = mRaidus;
                 float eyeYDisance_end_left_default = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance_end_left_default * eyeXDisance_end_left_default);
-                float eyeXDisance_end_left =eyeXDisance_end_left_default-mEndLoadingProgress*mRaidus*1/3;
+                float eyeXDisance_end_left = eyeXDisance_end_left_default - mEndLoadingProgress * mRaidus * 1 / 3;
                 float eyeYDisance_end_left = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance_end_left * eyeXDisance_end_left);
                 //
                 canvas.drawPoint(-eyeXDisance_end_left, -eyeYDisance_end_left, mPaint);//左边
 
-                float eyeXDisance_end_right_default= 0;
+                float eyeXDisance_end_right_default = 0;
                 float eyeYDisance_end_right_default = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance_end_right_default * eyeXDisance_end_right_default);
-                float eyeXDisance_end_right =eyeXDisance_end_right_default+mEndLoadingProgress*mRaidus*2/3;
+                float eyeXDisance_end_right = eyeXDisance_end_right_default + mEndLoadingProgress * mRaidus * 2 / 3;
                 float eyeYDisance_end_right = (float) Math.sqrt(mRaidus * mRaidus - eyeXDisance_end_right * eyeXDisance_end_right);
                 canvas.drawPoint(-eyeXDisance_end_right, eyeYDisance_end_right, mPaint);
                 break;
@@ -382,32 +394,32 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
                  * 上面的点  top
                  * 下面的点  bottom
                  */
-                float eyeTurn_X_top_default = mRaidus*2/3;
+                float eyeTurn_X_top_default = mRaidus * 2 / 3;
                 float eyeTurn_Y_top_default = (float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_top_default * eyeTurn_X_top_default);
-                float eyeTurn_X_top=0;
+                float eyeTurn_X_top = 0;
 
-                float eyeTurn_X_bottom_default = mRaidus*2/3;
+                float eyeTurn_X_bottom_default = mRaidus * 2 / 3;
                 float eyeTurn_Y_bottom_default = (float) Math.sqrt(mRaidus * mRaidus - eyeTurn_Y_top_default * eyeTurn_Y_top_default);
-                float eyeTurn_X_bottom=0;
-                float eyeTurn_Y_bottom=0;
-                float oneProgress=1.0f/3;
-                float oneProgressThenLeave=1-oneProgress;
+                float eyeTurn_X_bottom = 0;
+                float eyeTurn_Y_bottom = 0;
+                float oneProgress = 1.0f / 3;
+                float oneProgressThenLeave = 1 - oneProgress;
                 //top的1/3段
-                if (mTurnSmileProgress<oneProgress){
-                    eyeTurn_X_top=eyeTurn_X_top_default-mRaidus*2/3*(mTurnSmileProgress/oneProgress);
-                    eyeTurn_X_top=-1*eyeTurn_X_top;
+                if (mTurnSmileProgress < oneProgress) {
+                    eyeTurn_X_top = eyeTurn_X_top_default - mRaidus * 2 / 3 * (mTurnSmileProgress / oneProgress);
+                    eyeTurn_X_top = -1 * eyeTurn_X_top;
                     /***/
-                    eyeTurn_X_bottom=mRaidus*2/3+mRaidus*1/3*(mTurnSmileProgress/oneProgress);
-                    eyeTurn_Y_bottom=(float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_bottom * eyeTurn_X_bottom);
+                    eyeTurn_X_bottom = mRaidus * 2 / 3 + mRaidus * 1 / 3 * (mTurnSmileProgress / oneProgress);
+                    eyeTurn_Y_bottom = (float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_bottom * eyeTurn_X_bottom);
 
-                }else if (mTurnSmileProgress>=oneProgress){
-                    eyeTurn_X_top=mRaidus*2/3*(mTurnSmileProgress-oneProgress)/oneProgressThenLeave;
+                } else if (mTurnSmileProgress >= oneProgress) {
+                    eyeTurn_X_top = mRaidus * 2 / 3 * (mTurnSmileProgress - oneProgress) / oneProgressThenLeave;
                     /***/
-                    eyeTurn_X_bottom=mRaidus-mRaidus*1/3*(mTurnSmileProgress-oneProgress)/oneProgressThenLeave;
-                    eyeTurn_Y_bottom=(float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_bottom*eyeTurn_X_bottom);
-                    eyeTurn_Y_bottom=-1*eyeTurn_Y_bottom;
+                    eyeTurn_X_bottom = mRaidus - mRaidus * 1 / 3 * (mTurnSmileProgress - oneProgress) / oneProgressThenLeave;
+                    eyeTurn_Y_bottom = (float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_bottom * eyeTurn_X_bottom);
+                    eyeTurn_Y_bottom = -1 * eyeTurn_Y_bottom;
                 }
-                float eyeTurn_Y_top=(float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_top * eyeTurn_X_top);
+                float eyeTurn_Y_top = (float) Math.sqrt(mRaidus * mRaidus - eyeTurn_X_top * eyeTurn_X_top);
 
            /*     //bottom 的1/3段
                 float tempProgress=1.0f/3;
@@ -432,36 +444,47 @@ public class LikeDouBan_AlipaySmileLoadingView extends View {
                 /**
                  * bottom  x一直是负的
                  */
-               canvas.drawPoint(-eyeTurn_X_bottom, eyeTurn_Y_bottom, mPaint);
+                canvas.drawPoint(-eyeTurn_X_bottom, eyeTurn_Y_bottom, mPaint);
                 break;
         }
     }
 
-    public void setLoadingProgress(float loadingProgress) {
+   /* public void setLoadingProgress(float loadingProgress) {
         mLoadingProgress = loadingProgress;
-    }
+    }*/
+
     //动画开始入口
     public void startLoad() {
         if (mStopLoading) {
-            mCurrenState=STATE_STOP;
+            mCurrenState = STATE_STOP;
             mHandler.sendEmptyMessage(0);
+            mStopLoading = false;
         }
     }
+/*
     //动画开始入口
     public void startLoadDelayed(long delayMillis) {
         if (mStopLoading) {
-            mCurrenState=STATE_STOP;
+            mCurrenState = STATE_STOP;
             mHandler.sendEmptyMessageDelayed(0, delayMillis);
+            mStopLoading = false;
         }
-    }
+    }*/
+
     public void stopLoading() {
         if (!mStopLoading) {
+           // mCurrenState=STATE_START_LOAD;
             mStopLoading = true;
+            mValueAnimatorStartLoad.cancel();
+            mValueAnimatorLoading.cancel();
+            mValueAnimatorHoldSimle.cancel();
+            mValueAnimatorEndLoading.cancel();
+            mValueAnimatorTurnSmile.cancel();
         }
     }
 
     //
-    public int dp2px(int dpValue) {
+    private int dp2px(int dpValue) {
         int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
         return px;
     }

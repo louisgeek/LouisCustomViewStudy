@@ -32,9 +32,16 @@
         <attr name="insideSearchCircleRadius" format="dimension"/>
     </declare-styleable>
 
-    <declare-styleable name="LikeDouBan_AlipaySmileLoadingView">
-        <attr name="smileCircleRadius" format="dimension"/>
-        <attr name="smileCircleFrameHeight" format="dimension"/>
-        <attr name="smileColor" format="color"/>
+
+    <declare-styleable name="RadarView08">
+        <attr name="maxCircleRadius" format="dimension"/>
+        <attr name="contentColor" format="color"/>
+        <attr name="linesWidth" format="dimension"/>
+        <attr name="pointRadius" format="dimension"/>
+        <attr name="linesColor" format="color"/>
+        <attr name="pointColor" format="color"/>
+        <attr name="contentAlpha" format="integer"/>
+        <attr name="titleColor" format="color"/>
+        <attr name="titleTextSize" format="dimension"/>
     </declare-styleable>
 </resources>
